@@ -7,51 +7,63 @@
         <div class="form-outline mb-3">
           <label for="email" class="form-label">email</label>
           <input id="email" type="email" class="form-control" formControlName="email" />
-          <div class="text-danger" *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
-            A valid email is required.
-          </div>
+          @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+            <div class="text-danger">
+              A valid email is required.
+            </div>
+          }
         </div>
 
         <!-- Password -->
         <div class="form-outline mb-3">
           <label for="password" class="form-label">Password</label>
           <input id="password" type="password" class="form-control" formControlName="password" />
-          <div class="text-danger" *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
-            Password is required.
-          </div>
+          @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+            <div class="text-danger">
+              Password is required.
+            </div>
+          }
         </div>
 
         <!-- conferma -->
         <div class="form-outline mb-3">
           <label for="confirm" class="form-label">Conferma Password</label>
           <input id="confirm" type="password" class="form-control" formControlName="confirm" />
-          <div class="text-danger" *ngIf="registerForm.get('confirm')?.touched && registerForm.get('confirm')?.invalid">
-            Password is required.
-          </div>
+          @if (registerForm.get('confirm')?.touched && registerForm.get('confirm')?.invalid) {
+            <div class="text-danger">
+              Password is required.
+            </div>
+          }
         </div>
 
         <!-- nome -->
         <div class="form-outline mb-3">
           <label for="nome" class="form-label">Nome</label>
           <input id="nome" type="text" class="form-control" formControlName="nome" />
-          <div class="text-danger" *ngIf="registerForm.get('nome')?.touched && registerForm.get('nome')?.invalid">
-            Nome è obbligatorio.
-          </div>
+          @if (registerForm.get('nome')?.touched && registerForm.get('nome')?.invalid) {
+            <div class="text-danger">
+              Nome è obbligatorio.
+            </div>
+          }
         </div>
 
         <!-- cognome -->
         <div class="form-outline mb-3">
           <label for="cognome" class="form-label">Cognome</label>
           <input id="cognome" type="text" class="form-control" formControlName="cognome" />
-          <div class="text-danger" *ngIf="registerForm.get('cognome')?.touched && registerForm.get('cognome')?.invalid">
-            Cognome è obbligatorio.
-          </div>
+          @if (registerForm.get('cognome')?.touched && registerForm.get('cognome')?.invalid) {
+            <div class="text-danger">
+              Cognome è obbligatorio.
+            </div>
+          }
         </div>
 
         <!-- Error message -->
-        <div *ngIf="registerError" [innerHTML]="registerError" class="text-danger text-center mb-3"></div>
+        @if (registerError) {
+          <div [innerHTML]="registerError" class="text-danger text-center mb-3"></div>
+        }
 
-          <!-- Submit -->
+        <!-- Submit -->
         <div class="text-center">
           <button type="submit" class="btn btn-primary btn-block w-100" [disabled]="registerForm.invalid">
             Register
@@ -60,8 +72,8 @@
 
 
         <div class="text-center">
-            <p>Do you want to log in? <a routerLink="/login">Login</a></p>
-          </div>
+          <p>Do you want to log in? <a routerLink="/login">Login</a></p>
+        </div>
       </form>
     </div>
   </div>

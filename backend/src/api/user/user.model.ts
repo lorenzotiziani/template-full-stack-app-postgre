@@ -1,5 +1,3 @@
-import sql from 'mssql';
-import { getPool } from '../../config/database';
 import { User, UserSafe } from '../entities/authEntity';
 import {prisma} from '../../config/prisma'
 
@@ -25,7 +23,7 @@ export class UserModel {
     return result.recordset[0] || null;*/
   }
 
-  static async findByEmail(email: string): Promise<User | null> {
+  static async  findByEmail(email: string): Promise<User | null> {
     return await prisma.tUtente.findFirst({
       where:{email}
     })

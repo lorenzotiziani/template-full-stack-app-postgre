@@ -5,7 +5,7 @@ import {RefreshTokenModel} from '../../models/RefreshToken';
 import {loginDTO, registerDTO} from './auth.dto';
 import {jwtConfig} from '../../config/jwt';
 import {BadRequestError, UnauthorizedError} from '../../errors';
-import {AuthResponse, JwtPayload} from '../entities/authEntity'
+import {AuthResponse, JwtPayload, User} from '../entities/authEntity'
 
 export class AuthService {
   static async register(data: registerDTO): Promise<{ message: string; user: any }> {
@@ -25,6 +25,7 @@ export class AuthService {
       password: hashedPassword,
       nome: data.nome,
       cognome: data.cognome,
+      role: data.role,
       isActive: false
     });
 
@@ -122,10 +123,12 @@ export class AuthService {
     await RefreshTokenModel.revokeByToken(refreshToken);
   }
 
-  private static async generateTokens(user: any): Promise<{ accessToken: string; refreshToken: string }> {
+  private static async generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
+
     const payload: JwtPayload = {
       userId: user.id,
-      email: user.email
+      email: user.email,
+      role: user.role!
     };
 
     const accessTokenOptions: jwt.SignOptions = {

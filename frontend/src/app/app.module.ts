@@ -12,6 +12,8 @@ import { authInterceptor } from './utils/auth.interceptor';
 import { HomeComponent } from './pages/home/home.component';
 import {IfAuthenticatedDirective} from './utils/if-authenthicated.directive'
 import {logoutInterceptor} from "./utils/logout.interceptor";
+import {BaseChartDirective, provideCharts, withDefaultRegisterables} from 'ng2-charts';
+import {RouterModule} from "@angular/router";
 
 @NgModule({
   declarations: [
@@ -25,10 +27,13 @@ import {logoutInterceptor} from "./utils/logout.interceptor";
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BaseChartDirective,
+    RouterModule
   ],
   providers: [
     CurrencyPipe,
+    provideCharts(withDefaultRegisterables()),
     provideHttpClient(
       withInterceptors([authInterceptor, logoutInterceptor]),
     )

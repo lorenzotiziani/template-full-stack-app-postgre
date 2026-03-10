@@ -1,4 +1,4 @@
-import e, { Response,NextFunction } from 'express';
+import { Response,NextFunction } from 'express';
 import { UserService } from './user.service';
 import { AuthRequest } from '../../middleware/auth.middleware';
 
@@ -32,10 +32,6 @@ export class UserController {
   }
 
   static async changePassword(req: AuthRequest, res: Response, next:NextFunction) {
-    const ipAddress =
-        req.headers['x-forwarded-for']?.toString().split(',')[0].trim() ||
-        req.socket.remoteAddress ||
-        'Unknown';
     try {
       const { currentPassword, newPassword } = req.body;
 

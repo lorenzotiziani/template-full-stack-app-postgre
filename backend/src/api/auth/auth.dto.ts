@@ -45,7 +45,8 @@ export const registerRequirements = z.object({
         .max(50, "Il cognome è troppo lungo")
         .trim()
         .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, "Il cognome contiene caratteri non validi"),
-
+    role: z.string()
+        .optional()
   })
       .refine((data) => data.password === data.confirm, {
         message: "Le password non coincidono",

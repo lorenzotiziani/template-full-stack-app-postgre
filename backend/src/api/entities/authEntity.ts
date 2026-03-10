@@ -4,6 +4,7 @@ export interface User {
     password: string;
     nome: string;
     cognome: string;
+    role?: string;
     isActive: boolean;
 
 }
@@ -12,6 +13,7 @@ export interface UserSafe {
     email: string;
     nome: string;
     cognome: string;
+    role?: string;
     isActive: boolean;
 }
 
@@ -23,6 +25,7 @@ export interface AuthResponse {
 export interface JwtPayload {
     userId: number;
     email: string;
+    role: string;
     iat?: number;
     exp?: number;
 }
