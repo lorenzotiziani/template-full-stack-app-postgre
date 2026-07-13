@@ -11,6 +11,7 @@ import { authInterceptor } from './utils/auth.interceptor';
 import { HomeComponent } from './pages/home/home.component';
 import {IfAuthenticatedDirective} from './utils/if-authenticated.directive'
 import {BaseChartDirective, provideCharts, withDefaultRegisterables} from 'ng2-charts';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import {BaseChartDirective, provideCharts, withDefaultRegisterables} from 'ng2-c
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    IfAuthenticatedDirective
+    IfAuthenticatedDirective,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

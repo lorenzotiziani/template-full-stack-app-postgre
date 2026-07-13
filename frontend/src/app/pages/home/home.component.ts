@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import {AuthService} from "../../services/auth.service";
 import {ChartConfiguration, ChartType} from "chart.js";
 
 @Component({
@@ -10,14 +9,6 @@ import {ChartConfiguration, ChartType} from "chart.js";
 })
 export class HomeComponent {
   isGraph:boolean = true;
-
-  constructor(private authService: AuthService) {}
-
-  logout() {
-    this.authService.logout().subscribe({
-      complete: () => console.log('Logout completato')
-    });
-  }
 
   toggleView() { this.isGraph = !this.isGraph; }
   // DATI DI TEST
