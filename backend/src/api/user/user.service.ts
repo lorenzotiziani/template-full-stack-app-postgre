@@ -32,7 +32,6 @@ export class UserService {
 
 
   static async changePassword(userId: number, currentPassword: string, newPassword: string): Promise<void> {
-    // Verifica la password attuale
     const user = await UserModel.findById(userId);
     if (!user) {
       throw new NotFoundError('Utente non trovato');
@@ -43,7 +42,6 @@ export class UserService {
       throw new BadRequestError('Password attuale non corretta');
     }
 
-    // Verifica che la nuova password sia diversa da quella attuale
     const isSamePassword = await bcrypt.compare(newPassword, user.password);
     if (isSamePassword) {
       throw new BadRequestError('La nuova password deve essere diversa da quella attuale');

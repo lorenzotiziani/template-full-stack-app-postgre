@@ -25,9 +25,8 @@ export class AuthService {
       password: hashedPassword,
       nome: data.nome,
       cognome: data.cognome,
-      // Il ruolo NON è self-assegnabile in registrazione: default sicuro 'USER'
       role: 'USER',
-      // TODO esame: se il testo richiede l'attivazione via email, rimettere isActive:false
+      // TODO: se il testo richiede l'attivazione via email, rimettere isActive:false
       // e collegare la rotta di attivazione (activateAccountRequirements è già pronto in auth.dto.ts).
       isActive: true
     });

@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === 'production' && (!process.env.JWT_SECRET || !proces
 }
 
 if (!process.env.JWT_SECRET || !process.env.JWT_REFRESH_SECRET) {
-  console.warn('⚠️  JWT_SECRET/JWT_REFRESH_SECRET non impostati: uso valori di sviluppo insicuri.');
+  console.warn('JWT_SECRET/JWT_REFRESH_SECRET non impostati: uso valori di sviluppo insicuri.');
 }
 
 export const jwtConfig = {

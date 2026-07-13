@@ -1,6 +1,5 @@
 import * as z from "zod"
 
-// Password requirements
 const passwordRequirements = z.string()
     .min(8, "La password deve essere lunga almeno 8 caratteri")
     .max(128, "La password è troppo lunga")
@@ -23,7 +22,7 @@ export const loginRequirements = z.object({
         .email("Email non valida")
         .toLowerCase()
         .trim(),
-    password: z.string().min(1, "Password richiesta") // Non validare troppo in login
+    password: z.string().min(1, "Password richiesta")
   })
 });
 
@@ -45,8 +44,6 @@ export const registerRequirements = z.object({
         .max(50, "Il cognome è troppo lungo")
         .trim()
         .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, "Il cognome contiene caratteri non validi"),
-    // Nota: il ruolo NON è accettato dal client (niente privilege escalation).
-    // Viene forzato a 'USER' lato service (auth.service.ts).
   })
       .refine((data) => data.password === data.confirm, {
         message: "Le password non coincidono",

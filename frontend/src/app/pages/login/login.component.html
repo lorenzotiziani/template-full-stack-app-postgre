@@ -3,13 +3,11 @@
     <div class="col col-lg-4"></div>
     <div class="col col-lg-4 col-md-12 border rounded p-4">
       <form (ngSubmit)="login()" [formGroup]="loginForm">
-        <!-- Email input -->
         <div class="form-outline mb-4">
           <label class="form-label">Email address</label>
           <input type="email" class="form-control" formControlName="username" />
         </div>
 
-        <!-- Password input -->
         <div class="form-outline mb-4">
           <label class="form-label">Password</label>
           <input type="password" class="form-control" formControlName="password" />
@@ -20,12 +18,10 @@
           </div>
         }
 
-        <!-- Submit button -->
         <div class="text-center">
           <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
         </div>
 
-        <!-- Register link -->
         <div class="text-center">
           <p>Don't have an account? <a routerLink="/register">Register</a></p>
         </div>

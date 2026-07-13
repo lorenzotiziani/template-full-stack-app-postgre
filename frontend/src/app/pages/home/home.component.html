@@ -22,7 +22,6 @@
             </tr>
             </thead>
             <tbody>
-            <!-- We loop through the labels and use the index 'i' to get the data -->
             <tr *ngFor="let label of barChartData.labels; let i = index">
                 <td>{{ label }}</td>
                 <td>{{ barChartData.datasets[0].data[i] }}</td>

@@ -32,13 +32,13 @@ app.use(handlers);
 const startServer = async () => {
   try {
     await prisma.$connect();
-    console.log('✅ Connessione al database PostgreSQL (via Prisma) riuscita!');
+    console.log('Connessione al database PostgreSQL riuscita');
 
     app.listen(PORT, () => {
-      console.log(`🚀 Server in esecuzione su porta ${PORT}`);
+      console.log(`Server in esecuzione sulla porta ${PORT}`);
     });
   } catch (error) {
-    console.error('❌ Errore avvio server:', error);
+    console.error('Errore avvio server:', error);
     process.exit(1);
   }
 };

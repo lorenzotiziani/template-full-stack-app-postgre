@@ -51,7 +51,6 @@ export class UserModel {
     });
   }
 
-  // Metodo per verificare se un'email esiste (escludendo un utente specifico)
   static async isEmailTaken(email: string, excludeUserId?: number): Promise<boolean> {
     const count = await prisma.tUtente.count({
       where: {

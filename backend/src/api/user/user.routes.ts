@@ -6,19 +6,12 @@ import {validate} from "../../middleware/validate.middleware";
 
 const router = Router();
 
-// Applica il middleware di autenticazione a tutte le route
+// Autenticazione richiesta per tutte le route sottostanti
 router.use(authMiddleware);
 
-// Ottieni profilo utente corrente
 router.get('/profile', UserController.getProfile);
-
-// Cambia password
-router.put('/change-password',validate(changePasswordRequirements), UserController.changePassword);
-
-// Elimina account
+router.put('/change-password', validate(changePasswordRequirements), UserController.changePassword);
 router.delete('/deleteAccount', UserController.deleteAccount);
-
-// Ottieni tutti gli utenti (solo ADMIN)
 router.get('/', requireAdmin, UserController.getAllUsers);
 
 

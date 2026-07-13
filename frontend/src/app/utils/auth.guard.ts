@@ -6,16 +6,14 @@ export const authGuard: CanActivateFn = (route, state) => {
     const jwtService = inject(JwtService);
     const router = inject(Router);
 
-    // Controlla se il refresh token è valido
-    // (l'access token può essere scaduto, verrà refreshato dall'interceptor)
+    // Basta un refresh token valido: l'access token verrà rinnovato dall'interceptor
     const isAuthenticated = jwtService.isAuthenticated();
 
     if (isAuthenticated) {
         return true;
     }
 
-    // Non autenticato → pulisci eventuali token invalidi e redirect
-    console.warn('🚫 Auth Guard: accesso negato');
+    // Non autenticato: pulisci eventuali token invalidi e redirigi al login
     jwtService.removeToken();
 
     router.navigate(['/login'], {

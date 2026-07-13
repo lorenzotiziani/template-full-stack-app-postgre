@@ -45,10 +45,9 @@ export class RegisterComponent {
 			error: (err: any) => {
 
 				if (Array.isArray(err)) {
-					// Errori di validazione dal backend
+					// Il backend restituisce un array di errori di validazione
 					this.registerError = err.map(e => e.message).join('<br>');
 				} else if (typeof err === 'string') {
-					// Errore semplice
 					this.registerError = err;
 				} else {
 					this.registerError = 'Errore di connessione';

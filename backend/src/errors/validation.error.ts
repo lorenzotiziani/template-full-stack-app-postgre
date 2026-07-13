@@ -19,6 +19,5 @@ export const validationError = (
         });
     }
 
-    // Passa ad altri error handler
     next(err);
 }

@@ -6,7 +6,7 @@ export const genericHandler = (
     res: Response,
     next: NextFunction
 ) => {
-    console.error('🔴 Errore non gestito:', err);
+    console.error('Errore non gestito:', err);
 
     if (res.headersSent) {
         return next(err);
