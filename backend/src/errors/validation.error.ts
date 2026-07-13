@@ -14,6 +14,7 @@ export const validationError = (
         }));
 
         return res.status(400).json({
+            success: false,
             error: 'Validation failed',
             details: errors
         });

@@ -13,7 +13,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(helmet());
-app.use(cors({ origin: 'http://localhost:4200', credentials: true }));
+// Origin del frontend configurabile via env (fallback: dev su :4200)
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:4200', credentials: true }));
 app.use(morgan('tiny'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
