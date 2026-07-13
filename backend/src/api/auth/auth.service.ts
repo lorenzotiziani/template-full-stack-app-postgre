@@ -20,16 +20,26 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(data.password, 12);
 
-    const user = await UserModel.create({
-      email: data.email,
-      password: hashedPassword,
-      nome: data.nome,
-      cognome: data.cognome,
-      role: 'USER',
-      // TODO: se il testo richiede l'attivazione via email, rimettere isActive:false
-      // e collegare la rotta di attivazione (activateAccountRequirements è già pronto in auth.dto.ts).
-      isActive: true
-    });
+    let user;
+    try {
+      user = await UserModel.create({
+        email: data.email,
+        password: hashedPassword,
+        nome: data.nome,
+        cognome: data.cognome,
+        role: 'USER',
+        // TODO: se il testo richiede l'attivazione via email, rimettere isActive:false
+        // e collegare la rotta di attivazione (activateAccountRequirements è già pronto in auth.dto.ts).
+        isActive: true
+      });
+    } catch (error: any) {
+      // P2002 = violazione vincolo unique su email: copre la race tra
+      // il controllo sopra e l'insert.
+      if (error?.code === 'P2002') {
+        throw new BadRequestError('Email già registrata');
+      }
+      throw error;
+    }
 
 
     const { password, ...userWithoutPassword } = user;

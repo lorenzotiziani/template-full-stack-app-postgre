@@ -10,7 +10,7 @@ export class UserModel {
   }
 
   static async findByEmail(email: string): Promise<User | null> {
-    return await prisma.tUtente.findFirst({
+    return await prisma.tUtente.findUnique({
       where: { email },
     });
   }
