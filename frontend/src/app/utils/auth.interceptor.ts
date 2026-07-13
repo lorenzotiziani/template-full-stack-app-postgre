@@ -3,12 +3,25 @@ import {
     HttpHandlerFn,
     HttpRequest,
     HttpErrorResponse,
-    HttpClient
+    HttpClient,
+    HttpEvent
 } from '@angular/common/http';
 import { JwtService } from '../services/jwt.service';
 import { Router } from '@angular/router';
-import { catchError, switchMap } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { catchError, filter, switchMap, take } from 'rxjs/operators';
+import { BehaviorSubject, throwError, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+
+// Stato condiviso a livello di modulo per SERIALIZZARE il refresh:
+// se più richieste vanno in 401 insieme, solo la prima fa il refresh,
+// le altre aspettano il nuovo access token (niente token revocati a vicenda).
+let isRefreshing = false;
+const refreshSubject = new BehaviorSubject<string | null>(null);
+
+interface RefreshResponse {
+    success: boolean;
+    data: { accessToken: string; refreshToken: string };
+}
 
 export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) {
     const jwtService = inject(JwtService);
@@ -34,9 +47,7 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) 
             catchError((error: HttpErrorResponse) => {
                 if (error.status === 401) {
                     jwtService.removeToken();
-                    router.navigate(['/login'], {
-                        queryParams: { reason: 'no_token' }
-                    });
+                    router.navigate(['/login'], { queryParams: { reason: 'no_token' } });
                 }
                 return throwError(() => error);
             })
@@ -50,42 +61,8 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) 
 
     return next(clonedReq).pipe(
         catchError((error: HttpErrorResponse) => {
-
-            // 401: access token scaduto o invalido, provo il refresh
             if (error.status === 401) {
-                const refreshToken = authTokens.refreshToken;
-
-                if (refreshToken && jwtService.isRefreshTokenValid()) {
-                    return http.post<{ success: boolean; data: { accessToken: string; refreshToken: string } }>(
-                        'http://localhost:3000/api/auth/refresh',
-                        { refreshToken }
-                    ).pipe(
-                        switchMap((response) => {
-                            jwtService.setToken(response.data.accessToken, response.data.refreshToken);
-
-                            // Riprova la richiesta originale con il nuovo access token
-                            const retryReq = req.clone({
-                                setHeaders: { Authorization: `Bearer ${response.data.accessToken}` }
-                            });
-
-                            return next(retryReq);
-                        }),
-                        catchError(() => {
-                            jwtService.removeToken();
-                            router.navigate(['/login'], {
-                                queryParams: { reason: 'session_expired' }
-                            });
-
-                            return throwError(() => new Error('Sessione scaduta'));
-                        })
-                    );
-                }
-
-                jwtService.removeToken();
-                router.navigate(['/login'], {
-                    queryParams: { reason: 'no_refresh_token' }
-                });
-                return throwError(() => new Error('Autenticazione richiesta'));
+                return handle401(req, next, jwtService, router, http);
             }
 
             // 403: accesso negato
@@ -95,6 +72,59 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) 
             }
 
             return throwError(() => error);
+        })
+    );
+}
+
+// Gestione del 401 con refresh serializzato.
+function handle401(
+    req: HttpRequest<unknown>,
+    next: HttpHandlerFn,
+    jwtService: JwtService,
+    router: Router,
+    http: HttpClient
+): Observable<HttpEvent<unknown>> {
+    const tokens = jwtService.getToken();
+
+    // Nessun refresh token valido → logout pulito
+    if (!tokens?.refreshToken || !jwtService.isRefreshTokenValid()) {
+        jwtService.removeToken();
+        router.navigate(['/login'], { queryParams: { reason: 'session_expired' } });
+        return throwError(() => new Error('Sessione scaduta'));
+    }
+
+    // Un refresh è già in corso: aspetto il nuovo token e ritento
+    if (isRefreshing) {
+        return refreshSubject.pipe(
+            filter((token): token is string => token !== null),
+            take(1),
+            switchMap((token) =>
+                next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }))
+            )
+        );
+    }
+
+    // Sono il primo: avvio il refresh
+    isRefreshing = true;
+    refreshSubject.next(null);
+
+    return http.post<RefreshResponse>(`${environment.apiUrl}/auth/refresh`, {
+        refreshToken: tokens.refreshToken
+    }).pipe(
+        switchMap((response) => {
+            jwtService.setToken(response.data.accessToken, response.data.refreshToken);
+            isRefreshing = false;
+            refreshSubject.next(response.data.accessToken);
+            return next(req.clone({
+                setHeaders: { Authorization: `Bearer ${response.data.accessToken}` }
+            }));
+        }),
+        catchError(() => {
+            isRefreshing = false;
+            refreshSubject.next(null);
+            jwtService.removeToken();
+            router.navigate(['/login'], { queryParams: { reason: 'session_expired' } });
+            return throwError(() => new Error('Sessione scaduta'));
         })
     );
 }

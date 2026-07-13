@@ -2,7 +2,7 @@ import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute,Router } from '@angular/router';
-import { map, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +15,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   protected destroyed$ = new Subject<void>();
   loginForm: FormGroup;
   loginError: string = '';
+  // true quando si arriva dalla registrazione (?registered=1): mostra un avviso
+  justRegistered = false;
 
   constructor(
     private fb: FormBuilder,
@@ -22,7 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private router: Router
   ) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
   }
@@ -37,12 +39,10 @@ export class LoginComponent implements OnInit, OnDestroy {
       });
 
     this.activatedRoute.queryParams
-      .pipe(
-        takeUntil(this.destroyed$),
-        map(params => params['returnUrl'])
-      )
-      .subscribe(url => {
-        this.returnUrl = url;
+      .pipe(takeUntil(this.destroyed$))
+      .subscribe(params => {
+        this.returnUrl = params['returnUrl'] ?? null;
+        this.justRegistered = params['registered'] === '1';
       });
   }
 
@@ -56,9 +56,9 @@ export class LoginComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const { username, password } = this.loginForm.value;
+    const { email, password } = this.loginForm.value;
 
-    this.loginService.login(username, password).subscribe({
+    this.loginService.login(email, password).subscribe({
       next: () => {
         this.router.navigate([this.returnUrl ? this.returnUrl : '/']);
       },

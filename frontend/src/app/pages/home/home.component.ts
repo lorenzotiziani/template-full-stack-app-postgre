@@ -16,6 +16,9 @@ export class HomeComponent {
 
   public barChartOptions: ChartConfiguration['options'] = {
     responsive: true,
+    // Riempie il contenitore (che ha altezza fissa nel template):
+    // così il grafico si ridimensiona in modo stabile anche dopo una navigazione.
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true

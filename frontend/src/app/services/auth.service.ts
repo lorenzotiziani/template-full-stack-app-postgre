@@ -4,6 +4,7 @@ import { catchError, distinctUntilChanged, map, Observable, of, ReplaySubject, t
 import { JwtService } from './jwt.service';
 import { User } from '../entities/User';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 interface LoginResponse {
     success: boolean;
@@ -35,7 +36,7 @@ interface RegisterResponse {
     providedIn: 'root'
 })
 export class AuthService {
-    private readonly API_URL = 'http://localhost:3000/api';
+    private readonly API_URL = environment.apiUrl;
 
     protected http = inject(HttpClient);
     protected jwtSrv = inject(JwtService);
