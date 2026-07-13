@@ -19,6 +19,16 @@ const routes: Routes = [
     component:HomeComponent,
     canActivate:[authGuard]
   },
+  // Accesso negato (403): per ora rimanda al login
+  {
+    path: 'unauthorized',
+    redirectTo: 'login',
+  },
+  // Wildcard: qualsiasi path sconosciuto torna alla home
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
 
 @NgModule({

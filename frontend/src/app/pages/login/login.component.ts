@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ActivatedRoute,Router } from '@angular/router';
@@ -10,7 +10,7 @@ import { map, Subject, takeUntil } from 'rxjs';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit, OnDestroy {
   protected activatedRoute = inject(ActivatedRoute);
   protected destroyed$ = new Subject<void>();
   loginForm: FormGroup;
@@ -27,7 +27,8 @@ export class LoginComponent {
     });
   }
 
-  requestedUrl: string | null = null;
+  // URL a cui tornare dopo il login (impostato dall'authGuard come queryParam 'returnUrl')
+  returnUrl: string | null = null;
   ngOnInit() {
     this.loginForm.valueChanges
       .pipe(takeUntil(this.destroyed$))
@@ -38,11 +39,16 @@ export class LoginComponent {
     this.activatedRoute.queryParams
       .pipe(
         takeUntil(this.destroyed$),
-        map(params => params['requestedUrl'])
+        map(params => params['returnUrl'])
       )
       .subscribe(url => {
-        this.requestedUrl = url;
+        this.returnUrl = url;
       });
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 
   login() {
@@ -54,7 +60,7 @@ export class LoginComponent {
 
     this.loginService.login(username, password).subscribe({
       next: () => {
-        this.router.navigate([this.requestedUrl ? this.requestedUrl : '/']);
+        this.router.navigate([this.returnUrl ? this.returnUrl : '/']);
       },
       error: (err: Error) => {
         this.loginError = err.message;
