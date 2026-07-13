@@ -15,10 +15,14 @@ export function authInterceptor(req: HttpRequest<unknown>, next: HttpHandlerFn) 
     const router = inject(Router);
     const http = inject(HttpClient);
 
-    // Non intercettare le route di autenticazione
+    // Non intercettare le route di autenticazione.
+    // IMPORTANTE: refresh e logout DEVONO essere qui, altrimenti un loro 401
+    // farebbe ripartire il refresh su sé stesso → loop infinito di richieste.
     if (req.url.includes('/api/auth/login') ||
         req.url.includes('/api/auth/register') ||
-        req.url.includes('/api/auth/activate')) {
+        req.url.includes('/api/auth/activate') ||
+        req.url.includes('/api/auth/refresh') ||
+        req.url.includes('/api/auth/logout')) {
         return next(req);
     }
 
