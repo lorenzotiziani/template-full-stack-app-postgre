@@ -18,7 +18,7 @@ export const prisma =
     globalForPrisma.prisma ??
     new PrismaClient({
         adapter, // This satisfies the "requires adapter" error!
-        log: ['query'],
+        log: process.env.NODE_ENV === 'production' ? ['error'] : ['query', 'error'],
     });
 
 if (process.env.NODE_ENV !== 'production') 

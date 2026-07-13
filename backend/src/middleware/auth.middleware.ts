@@ -6,6 +6,7 @@ export interface AuthRequest extends Request {
   user?: {
     userId: number;
     email: string;
+    role: string;
   };
 }
 
@@ -36,11 +37,27 @@ export const authMiddleware = async (
     // Aggiungi user info alla request
     (req as AuthRequest).user = {
       userId: decoded.userId,
-      email: decoded.email
+      email: decoded.email,
+      role: decoded.role
     };
 
     next();
   } catch (error) {
     next(error);
   }
+};
+
+// Consente l'accesso solo agli utenti con ruolo ADMIN.
+// Va usato DOPO authMiddleware (che popola req.user con il ruolo dal JWT).
+export const requireAdmin = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+): void => {
+  const user = (req as AuthRequest).user;
+  if (!user || user.role !== 'ADMIN') {
+    next(new UnauthorizedError('Accesso riservato agli amministratori'));
+    return;
+  }
+  next();
 };

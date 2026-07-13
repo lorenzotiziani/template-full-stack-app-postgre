@@ -18,11 +18,6 @@ export class AuthController {
   }
 
   static async login(req: Request, res: Response, next: NextFunction) {
-    const ipAddress =
-        req.headers['x-forwarded-for']?.toString().split(',')[0].trim() ||
-        req.socket.remoteAddress ||
-        'Unknown';
-
     try {
       const data: loginDTO = req.body;
       const result = await AuthService.login(data);

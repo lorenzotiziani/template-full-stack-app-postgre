@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { UserController } from './user.controller';
-import { authMiddleware } from '../../middleware/auth.middleware';
+import { authMiddleware, requireAdmin } from '../../middleware/auth.middleware';
 import {changePasswordRequirements} from "./user.dto";
 import {validate} from "../../middleware/validate.middleware";
 
@@ -18,8 +18,8 @@ router.put('/change-password',validate(changePasswordRequirements), UserControll
 // Elimina account
 router.delete('/deleteAccount', UserController.deleteAccount);
 
-// Ottieni tutti gli utenti
-router.get('/', UserController.getAllUsers);
+// Ottieni tutti gli utenti (solo ADMIN)
+router.get('/', requireAdmin, UserController.getAllUsers);
 
 
 

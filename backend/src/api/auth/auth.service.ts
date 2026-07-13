@@ -25,15 +25,18 @@ export class AuthService {
       password: hashedPassword,
       nome: data.nome,
       cognome: data.cognome,
-      role: data.role,
-      isActive: false
+      // Il ruolo NON è self-assegnabile in registrazione: default sicuro 'USER'
+      role: 'USER',
+      // TODO esame: se il testo richiede l'attivazione via email, rimettere isActive:false
+      // e collegare la rotta di attivazione (activateAccountRequirements è già pronto in auth.dto.ts).
+      isActive: true
     });
 
 
     const { password, ...userWithoutPassword } = user;
 
     return {
-      message: 'Registrazione completata. Controlla la tua email per attivare l\'account.',
+      message: 'Registrazione completata. Ora puoi effettuare il login.',
       user: userWithoutPassword
     };
   }
