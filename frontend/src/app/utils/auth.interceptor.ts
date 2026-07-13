@@ -1,4 +1,3 @@
-// src/app/core/interceptors/auth.interceptor.ts
 import { inject } from '@angular/core';
 import {
     HttpHandlerFn,

@@ -1,4 +1,4 @@
-import { HttpInterceptorFn, HttpClient, HttpErrorResponse } from "@angular/common/http";
+import { HttpInterceptorFn, HttpErrorResponse } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { catchError, switchMap, throwError } from "rxjs";
 import { AuthService } from "../services/auth.service";
@@ -7,10 +7,8 @@ import { JwtService } from "../services/jwt.service";
 export const logoutInterceptor: HttpInterceptorFn = (req, next) => {
     const authSrv = inject(AuthService);
     const jwtSrv = inject(JwtService);
-    const http = inject(HttpClient);
 
-
-    if (req.url.includes('/api/login') || req.url.includes('/api/refresh')) {
+    if (req.url.includes('/api/auth/login') || req.url.includes('/api/auth/refresh')) {
         return next(req);
     }
 

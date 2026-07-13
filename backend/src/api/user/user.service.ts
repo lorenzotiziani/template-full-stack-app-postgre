@@ -48,13 +48,10 @@ export class UserService {
       throw new Error('La nuova password deve essere diversa da quella attuale');
     }
 
-    // Hash della nuova password
     const hashedNewPassword = await bcrypt.hash(newPassword, 12);
 
-    // Aggiorna la password
     await UserModel.update(userId, { password: hashedNewPassword });
 
-    // Revoca tutti i refresh token per forzare un nuovo login
     await RefreshTokenModel.revokeByUserId(userId);
   }
 
@@ -66,7 +63,6 @@ export class UserService {
 
     await UserModel.delete(userId);
 
-    // Revoca tutti i refresh token
     await RefreshTokenModel.revokeByUserId(userId);
   }
 
